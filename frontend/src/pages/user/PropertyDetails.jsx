@@ -1,15 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { useParams, useNavigate } from "react-router-dom"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
 import {
   Home,
   MapPin,
@@ -30,69 +24,47 @@ import {
   Star,
   Share2,
   MoveRight,
-} from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import EmptyState from "@/components/EmptyState";
-import { format } from "date-fns";
-import { useProperty } from "@/hooks/useProperties";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import { useAuth } from "@/context/AuthContext";
-import VisitStatusManager from "../../components/VisitStatusManager";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import axios from "axios";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { FavoriteButton } from "@/components/FavoriteButton";
-import { ChatButton } from "@/components/ChatButton";
-import { ChatWindow } from "@/components/ChatWindow";
-import { useChatContext } from "@/context/ChatProvider";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Facebook, Twitter, Mail, LinkIcon } from "lucide-react";
-import ReviewsSection from "@/components/ReviewsSection";
+} from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import EmptyState from "@/components/EmptyState"
+import { format } from "date-fns"
+import { useProperty } from "@/hooks/useProperties"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useState } from "react"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+import "leaflet/dist/leaflet.css"
+import L from "leaflet"
+import { useAuth } from "@/context/AuthContext"
+import VisitStatusManager from "../../components/VisitStatusManager"
+import { FormProvider, useForm } from "react-hook-form"
+import { toast } from "react-toastify"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import axios from "axios"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { FavoriteButton } from "@/components/FavoriteButton"
+import { ChatButton } from "@/components/ChatButton"
+import { ChatWindow } from "@/components/ChatWindow"
+import { useChatContext } from "@/context/ChatProvider"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Facebook, Twitter, Mail, LinkIcon } from "lucide-react"
 
 const PropertyDetails = () => {
-  const { id } = useParams();
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [openCheckout, setOpenCheckout] = useState(false);
-  const [openVisitDialog, setOpenVisitDialog] = useState(false);
-  const { startConversation, setIsChatOpen } = useChatContext();
-  const [error, setError] = useState(null);
+  const { id } = useParams()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [openCheckout, setOpenCheckout] = useState(false)
+  const [openVisitDialog, setOpenVisitDialog] = useState(false)
+  const { startConversation, setIsChatOpen } = useChatContext()
+  const [error, setError] = useState(null)
 
-  let { data: property, isLoading, isError } = useProperty(id);
-  property = property?.property;
-  const isOwner = user && property && user._id === property.host._id;
+  let { data: property, isLoading, isError } = useProperty(id)
+  property = property?.property
+
+  console.log("property", property)
+  const isOwner = user && property && user._id === property.host._id
 
   // Booking form
   const bookingForm = useForm({
@@ -100,7 +72,7 @@ const PropertyDetails = () => {
       startDate: "",
       endDate: "",
     },
-  });
+  })
 
   const onSubmitBooking = async (data) => {
     try {
@@ -114,34 +86,32 @@ const PropertyDetails = () => {
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
-        }
-      );
+        },
+      )
 
-      const { paymentUrl, paymentData } = res.data;
+      const { paymentUrl, paymentData } = res.data
 
       // Create form for eSewa redirect
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = paymentUrl;
+      const form = document.createElement("form")
+      form.method = "POST"
+      form.action = paymentUrl
 
       Object.entries(paymentData).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-      });
+        const input = document.createElement("input")
+        input.type = "hidden"
+        input.name = key
+        input.value = value
+        form.appendChild(input)
+      })
 
-      document.body.appendChild(form);
-      form.submit();
+      document.body.appendChild(form)
+      form.submit()
 
-      setOpenCheckout(false);
+      setOpenCheckout(false)
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to initiate booking"
-      );
+      toast.error(error.response?.data?.message || "Failed to initiate booking")
     }
-  };
+  }
 
   // Visit form
   const visitForm = useForm({
@@ -152,7 +122,7 @@ const PropertyDetails = () => {
       date: "",
       message: "",
     },
-  });
+  })
 
   const onSubmitVisit = async (data) => {
     try {
@@ -165,44 +135,41 @@ const PropertyDetails = () => {
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
-        }
-      );
+        },
+      )
 
-      toast.success(res.data.message);
-      setOpenVisitDialog(false);
-      visitForm.reset();
+      toast.success(res.data.message)
+      setOpenVisitDialog(false)
+      visitForm.reset()
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to send visit request"
-      );
+      toast.error(error.response?.data?.message || "Failed to send visit request")
     }
-  };
-
+  }
   // Start conversation with property owner
   const handleMessageOwner = async () => {
     if (!user) {
-      setError("Please log in to message the owner");
-      return;
+      setError("Please log in to message the owner")
+      return
     }
     if (!property?.host?._id) {
-      setError("No owner found for this property");
-      return;
+      setError("No owner found for this property")
+      return
     }
     if (property.host._id === user._id) {
-      setError("You cannot message yourself");
-      return;
+      setError("You cannot message yourself")
+      return
     }
     try {
-      setError(null);
-      console.log("Starting conversation with owner:", property.host._id);
-      const conversation = await startConversation(property.host._id, id);
-      console.log("Conversation created:", conversation);
-      setIsChatOpen(true); // Open chat window
+      setError(null)
+      console.log("Starting conversation with owner:", property.host._id)
+      const conversation = await startConversation(property.host._id, id)
+      console.log("Conversation created:", conversation)
+      setIsChatOpen(true) // Open chat window
     } catch (err) {
-      console.error("Failed to start conversation:", err);
-      setError("Failed to start conversation");
+      console.error("Failed to start conversation:", err)
+      setError("Failed to start conversation")
     }
-  };
+  }
 
   // Fix for default marker icons
   const DefaultIcon = L.icon({
@@ -212,14 +179,14 @@ const PropertyDetails = () => {
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
-  });
-  L.Marker.prototype.options.icon = DefaultIcon;
+  })
+  L.Marker.prototype.options.icon = DefaultIcon
 
   const nightMode = {
     url: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
     attribution:
       '© <a href="https://stadiamaps.com/">Stadia Maps</a>, © <a href="https://openmaptiles.org/">OpenMapTiles</a> © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-  };
+  }
 
   if (isLoading) {
     return (
@@ -243,7 +210,7 @@ const PropertyDetails = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   if (isError) {
@@ -252,10 +219,10 @@ const PropertyDetails = () => {
         title="Property not found"
         description="The property you're looking for doesn't exist or may have been removed."
       />
-    );
+    )
   }
 
-  if (!property) return null;
+  if (!property) return null
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -263,10 +230,7 @@ const PropertyDetails = () => {
         {/* Header with back button */}
         <div className="flex justify-between items-center">
           <Button variant="outline" asChild>
-            <a
-              href="/dashboard/my-properties"
-              className="flex items-center gap-2"
-            >
+            <a href="/dashboard/my-properties" className="flex items-center gap-2">
               <ChevronLeft className="h-5 w-5" />
               <span className="hidden md:block">Back to Properties</span>
             </a>
@@ -294,34 +258,17 @@ const PropertyDetails = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight">
-                    {property.title}
-                  </h1>
+                  <h1 className="text-3xl font-bold tracking-tight">{property.title}</h1>
                   <div className="flex items-center gap-2 mt-2">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-current" />
-                      <span>{property.averageRating?.toFixed(1) || "0.0"}</span>
-                      <span className="text-muted-foreground">
-                        ({property.reviews?.length || 0} reviews)
-                      </span>
-                    </div>
-                    <span>·</span>
                     <span className="text-muted-foreground">
                       {property.address.city}, {property.address.state}
-                    </span>
-                    <span>·</span>
-                    <span className="text-muted-foreground">
-                      {property.views || 0} views
                     </span>
                   </div>
                 </div>
 
                 {isOwner && (
                   <Button asChild variant="outline">
-                    <a
-                      href={`/dashboard/edit/${property._id}`}
-                      className="flex items-center gap-2"
-                    >
+                    <a href={`/dashboard/edit/${property._id}`} className="flex items-center gap-2">
                       <Edit className="h-4 w-4" />
                       <span>Edit</span>
                     </a>
@@ -334,17 +281,13 @@ const PropertyDetails = () => {
                 <Badge variant="secondary" className="capitalize">
                   {property.propertyType.toLowerCase()}
                 </Badge>
-                <Badge variant="secondary">
-                  {property.bhkConfiguration.bedrooms} BHK
-                </Badge>
+                <Badge variant="secondary">{property.bhkConfiguration.bedrooms} BHK</Badge>
                 {property.isExpired ? (
                   <Badge variant="destructive">Expired</Badge>
                 ) : (
                   <Badge variant="success">Active</Badge>
                 )}
-                {property.isAvailable && (
-                  <Badge variant="outline">Available Now</Badge>
-                )}
+                {property.isAvailable && <Badge variant="outline">Available Now</Badge>}
               </div>
             </div>
 
@@ -379,10 +322,7 @@ const PropertyDetails = () => {
             {property.images?.length > 1 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {property.images.slice(0, 4).map((image, index) => (
-                  <div
-                    key={index}
-                    className="aspect-auto rounded-lg overflow-hidden"
-                  >
+                  <div key={index} className="aspect-auto rounded-lg overflow-hidden">
                     <img
                       src={image.url || "/placeholder.svg"}
                       alt={`Property thumbnail ${index + 1}`}
@@ -399,46 +339,30 @@ const PropertyDetails = () => {
               <div className="space-y-8">
                 {/* Description */}
                 <div className="space-y-4">
-                  <h2 className="text-2xl font-semibold">
-                    About this property
-                  </h2>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {property.description}
-                  </p>
+                  <h2 className="text-2xl font-semibold">About this property</h2>
+                  <p className="text-muted-foreground leading-relaxed">{property.description}</p>
                 </div>
 
                 {/* Amenities */}
                 <div className="space-y-4">
-                  <h2 className="text-2xl font-semibold">
-                    What this place offers
-                  </h2>
+                  <h2 className="text-2xl font-semibold">What this place offers</h2>
                   {property.amenities?.length > 0 ? (
                     <div className="grid grid-cols-1 gap-3">
                       {property.amenities.map((amenity) => (
                         <div key={amenity} className="flex items-center gap-3">
                           {amenity === "Wifi" && <Wifi className="h-5 w-5" />}
-                          {amenity === "Air Conditioning" && (
-                            <AirVent className="h-5 w-5" />
-                          )}
+                          {amenity === "Air Conditioning" && <AirVent className="h-5 w-5" />}
                           {amenity === "TV" && <Tv className="h-5 w-5" />}
                           {amenity === "Parking" && <Car className="h-5 w-5" />}
-                          {amenity === "Gym" && (
-                            <Dumbbell className="h-5 w-5" />
-                          )}
-                          {amenity === "Pet-Friendly" && (
-                            <Dog className="h-5 w-5" />
-                          )}
-                          {amenity === "Security" && (
-                            <Camera className="h-5 w-5" />
-                          )}
+                          {amenity === "Gym" && <Dumbbell className="h-5 w-5" />}
+                          {amenity === "Pet-Friendly" && <Dog className="h-5 w-5" />}
+                          {amenity === "Security" && <Camera className="h-5 w-5" />}
                           <span>{amenity}</span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">
-                      No amenities listed for this property.
-                    </p>
+                    <p className="text-muted-foreground">No amenities listed for this property.</p>
                   )}
                 </div>
               </div>
@@ -452,40 +376,28 @@ const PropertyDetails = () => {
                     <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                       <Bed className="h-5 w-5 text-primary" />
                       <div>
-                        <p className="text-sm text-muted-foreground">
-                          Bedrooms
-                        </p>
-                        <p className="font-medium">
-                          {property.bhkConfiguration.bedrooms}
-                        </p>
+                        <p className="text-sm text-muted-foreground">Bedrooms</p>
+                        <p className="font-medium">{property.bhkConfiguration.bedrooms}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                       <Bath className="h-5 w-5 text-primary" />
                       <div>
-                        <p className="text-sm text-muted-foreground">
-                          Bathrooms
-                        </p>
-                        <p className="font-medium">
-                          {property.bhkConfiguration.bathrooms}
-                        </p>
+                        <p className="text-sm text-muted-foreground">Bathrooms</p>
+                        <p className="font-medium">{property.bhkConfiguration.bathrooms}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                       <Ruler className="h-5 w-5 text-primary" />
                       <div>
                         <p className="text-sm text-muted-foreground">Area</p>
-                        <p className="font-medium">
-                          {property.builtUpArea} sq.ft
-                        </p>
+                        <p className="font-medium">{property.builtUpArea} sq.ft</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                       <Users className="h-5 w-5 text-primary" />
                       <div>
-                        <p className="text-sm text-muted-foreground">
-                          Max Guests
-                        </p>
+                        <p className="text-sm text-muted-foreground">Max Guests</p>
                         <p className="font-medium">{property.maxGuests}</p>
                       </div>
                     </div>
@@ -500,32 +412,20 @@ const PropertyDetails = () => {
                       <Dog className="h-5 w-5" />
                       <div>
                         <p className="text-sm text-muted-foreground">Pets</p>
-                        <p className="font-medium">
-                          {property.houseRules.petsAllowed
-                            ? "Allowed"
-                            : "Not Allowed"}
-                        </p>
+                        <p className="font-medium">{property.houseRules.petsAllowed ? "Allowed" : "Not Allowed"}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                       <AirVent className="h-5 w-5" />
                       <div>
                         <p className="text-sm text-muted-foreground">Smoking</p>
-                        <p className="font-medium">
-                          {property.houseRules.smokingAllowed
-                            ? "Allowed"
-                            : "Not Allowed"}
-                        </p>
+                        <p className="font-medium">{property.houseRules.smokingAllowed ? "Allowed" : "Not Allowed"}</p>
                       </div>
                     </div>
                     {property.houseRules.extraRules && (
                       <div className="p-3 bg-muted/50 rounded-lg">
-                        <p className="text-sm text-muted-foreground">
-                          Additional Rules
-                        </p>
-                        <p className="font-medium">
-                          {property.houseRules.extraRules}
-                        </p>
+                        <p className="text-sm text-muted-foreground">Additional Rules</p>
+                        <p className="font-medium">{property.houseRules.extraRules}</p>
                       </div>
                     )}
                   </div>
@@ -544,16 +444,11 @@ const PropertyDetails = () => {
                     scrollWheelZoom={false}
                     className="h-full w-full rounded-xl"
                   >
-                    <TileLayer
-                      url={nightMode.url}
-                      attribution={nightMode.attribution}
-                    />
+                    <TileLayer url={nightMode.url} attribution={nightMode.attribution} />
                     <Marker position={property.address.coordinates}>
                       <Popup>
                         <div className="space-y-1">
-                          <p className="font-medium">
-                            {property.address.street}
-                          </p>
+                          <p className="font-medium">{property.address.street}</p>
                           <p className="text-sm">
                             {property.address.city}, {property.address.state}
                           </p>
@@ -567,13 +462,10 @@ const PropertyDetails = () => {
                 <div className="space-y-1">
                   <p className="font-medium">{property.address.street}</p>
                   <p className="text-muted-foreground">
-                    {property.address.city}, {property.address.state}{" "}
-                    {property.address.postalCode}
+                    {property.address.city}, {property.address.state} {property.address.postalCode}
                   </p>
                   {property.address.landmark && (
-                    <p className="text-muted-foreground">
-                      Near {property.address.landmark}
-                    </p>
+                    <p className="text-muted-foreground">Near {property.address.landmark}</p>
                   )}
                 </div>
 
@@ -589,9 +481,6 @@ const PropertyDetails = () => {
                 </Button>
               </div>
             </div>
-
-            {/* Reviews Section */}
-            <ReviewsSection propertyId={id} />
           </div>
 
           {/* Sidebar - Renting card */}
@@ -602,20 +491,15 @@ const PropertyDetails = () => {
                   <div>
                     <p className="text-2xl font-bold">
                       NPR {property.pricePerMonth}
-                      <span className="text-base font-normal text-muted-foreground">
-                        {" "}
-                        / month
-                      </span>
+                      <span className="text-base font-normal text-muted-foreground"> / month</span>
                     </p>
                     {property.pricePerDay > 0 && (
-                      <p className="text-sm text-muted-foreground">
-                        NPR {property.pricePerDay} / day
-                      </p>
+                      <p className="text-sm text-muted-foreground">NPR {property.pricePerDay} / day</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-current" />
-                    <span>{property.averageRating?.toFixed(1) || "0.0"}</span>
+                    <span>4.8</span>
                   </div>
                 </div>
               </CardHeader>
@@ -624,14 +508,10 @@ const PropertyDetails = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Check-in</p>
-                    <p className="font-medium">
-                      {format(new Date(property.availableFrom), "MMM d, yyyy")}
-                    </p>
+                    <p className="font-medium">{format(new Date(property.availableFrom), "MMM d, yyyy")}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">
-                      Minimum stay
-                    </p>
+                    <p className="text-sm text-muted-foreground">Minimum stay</p>
                     <p className="font-medium">
                       {property.minimumStayMonths} month
                       {property.minimumStayMonths > 1 ? "s" : ""}
@@ -664,24 +544,14 @@ const PropertyDetails = () => {
 
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>
-                    NPR{" "}
-                    {property.pricePerMonth +
-                      (property.securityDeposit || 0) +
-                      120 +
-                      75}
-                  </span>
+                  <span>NPR {property.pricePerMonth + (property.securityDeposit || 0) + 120 + 75}</span>
                 </div>
               </CardContent>
 
               <CardFooter className="flex flex-col gap-4">
                 <Dialog open={openCheckout} onOpenChange={setOpenCheckout}>
                   <DialogTrigger asChild>
-                    <Button
-                      size="lg"
-                      className="w-full"
-                      disabled={isOwner || !property.isAvailable}
-                    >
+                    <Button size="lg" className="w-full" disabled={isOwner || !property.isAvailable}>
                       Rent this property
                     </Button>
                   </DialogTrigger>
@@ -696,9 +566,7 @@ const PropertyDetails = () => {
                           className="space-y-6 p-1 sm:p-2 md:p-4"
                         >
                           <div className="space-y-2">
-                            <h3 className="font-semibold text-lg text-center lg:text-left">
-                              Your Property
-                            </h3>
+                            <h3 className="font-semibold text-lg text-center lg:text-left">Your Property</h3>
                             <div className="grid grid-cols-2 gap-4 p-3 sm:p-4 bg-muted/5 rounded-lg">
                               <FormField
                                 control={bookingForm.control}
@@ -709,11 +577,7 @@ const PropertyDetails = () => {
                                     <FormControl>
                                       <Input
                                         type="date"
-                                        min={
-                                          new Date(property.availableFrom)
-                                            .toISOString()
-                                            .split("T")[0]
-                                        }
+                                        min={new Date(property.availableFrom).toISOString().split("T")[0]}
                                         {...field}
                                       />
                                     </FormControl>
@@ -738,44 +602,27 @@ const PropertyDetails = () => {
                           </div>
 
                           <div className="space-y-4">
-                            <h3 className="font-semibold text-lg">
-                              Price details
-                            </h3>
+                            <h3 className="font-semibold text-lg">Price details</h3>
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground text-sm sm:text-base">
-                                  NPR {property.pricePerMonth} x{" "}
-                                  {property.minimumStayMonths} months
+                                  NPR {property.pricePerMonth} x {property.minimumStayMonths} months
                                 </span>
                                 <span className="text-sm sm:text-base">
-                                  NPR{" "}
-                                  {property.pricePerMonth *
-                                    property.minimumStayMonths}
+                                  NPR {property.pricePerMonth * property.minimumStayMonths}
                                 </span>
                               </div>
                               <div className="flex justify-between items-center">
-                                <span className="text-muted-foreground text-sm sm:text-base">
-                                  Security deposit
-                                </span>
-                                <span className="text-sm sm:text-base">
-                                  NPR {property.securityDeposit || "0"}
-                                </span>
+                                <span className="text-muted-foreground text-sm sm:text-base">Security deposit</span>
+                                <span className="text-sm sm:text-base">NPR {property.securityDeposit || "0"}</span>
                               </div>
                               <div className="flex justify-between items-center">
-                                <span className="text-muted-foreground text-sm sm:text-base">
-                                  Service fee
-                                </span>
-                                <span className="text-sm sm:text-base">
-                                  NPR 120
-                                </span>
+                                <span className="text-muted-foreground text-sm sm:text-base">Service fee</span>
+                                <span className="text-sm sm:text-base">NPR 120</span>
                               </div>
                               <div className="flex justify-between items-center">
-                                <span className="text-muted-foreground text-sm sm:text-base">
-                                  Cleaning fee
-                                </span>
-                                <span className="text-sm sm:text-base">
-                                  NPR 75
-                                </span>
+                                <span className="text-muted-foreground text-sm sm:text-base">Cleaning fee</span>
+                                <span className="text-sm sm:text-base">NPR 75</span>
                               </div>
                             </div>
 
@@ -785,8 +632,7 @@ const PropertyDetails = () => {
                               <span>Total</span>
                               <span>
                                 NPR{" "}
-                                {property.pricePerMonth *
-                                  property.minimumStayMonths +
+                                {property.pricePerMonth * property.minimumStayMonths +
                                   (property.securityDeposit || 0) +
                                   120 +
                                   75}
@@ -794,11 +640,7 @@ const PropertyDetails = () => {
                             </div>
                           </div>
 
-                          <Button
-                            type="submit"
-                            size="lg"
-                            className="w-full text-sm sm:text-base"
-                          >
+                          <Button type="submit" size="lg" className="w-full text-sm sm:text-base">
                             Proceed to Payment
                           </Button>
                         </form>
@@ -806,17 +648,9 @@ const PropertyDetails = () => {
                     </ScrollArea>
                   </DialogContent>
                 </Dialog>
-                <Dialog
-                  open={openVisitDialog}
-                  onOpenChange={setOpenVisitDialog}
-                >
+                <Dialog open={openVisitDialog} onOpenChange={setOpenVisitDialog}>
                   <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full"
-                      disabled={isOwner}
-                    >
+                    <Button variant="outline" size="lg" className="w-full" disabled={isOwner}>
                       Book a Visit
                     </Button>
                   </DialogTrigger>
@@ -825,10 +659,7 @@ const PropertyDetails = () => {
                       <DialogTitle>Schedule a Property Visit</DialogTitle>
                     </DialogHeader>
                     <FormProvider {...visitForm}>
-                      <form
-                        onSubmit={visitForm.handleSubmit(onSubmitVisit)}
-                        className="space-y-4"
-                      >
+                      <form onSubmit={visitForm.handleSubmit(onSubmitVisit)} className="space-y-4">
                         <FormField
                           control={visitForm.control}
                           name="name"
@@ -849,11 +680,7 @@ const PropertyDetails = () => {
                             <FormItem>
                               <FormLabel>Email</FormLabel>
                               <FormControl>
-                                <Input
-                                  type="email"
-                                  placeholder="Your email"
-                                  {...field}
-                                />
+                                <Input type="email" placeholder="Your email" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -866,10 +693,7 @@ const PropertyDetails = () => {
                             <FormItem>
                               <FormLabel>Phone Number</FormLabel>
                               <FormControl>
-                                <Input
-                                  placeholder="Your phone number"
-                                  {...field}
-                                />
+                                <Input placeholder="Your phone number" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -895,21 +719,14 @@ const PropertyDetails = () => {
                             <FormItem>
                               <FormLabel>Additional Message</FormLabel>
                               <FormControl>
-                                <Textarea
-                                  placeholder="Any special requests or questions"
-                                  {...field}
-                                />
+                                <Textarea placeholder="Any special requests or questions" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
                         <div className="flex justify-end gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setOpenVisitDialog(false)}
-                          >
+                          <Button type="button" variant="outline" onClick={() => setOpenVisitDialog(false)}>
                             Cancel
                           </Button>
                           <Button type="submit">Submit Request</Button>
@@ -944,13 +761,13 @@ const PropertyDetails = () => {
                   <div className="text-center sm:text-left space-y-2">
                     <p className="font-medium text-xl">{property.host.name}</p>
                     <div className="flex items-center justify-center sm:justify-start gap-2 text-sm text-muted-foreground">
-                      <span>
-                        Host since{" "}
-                        {new Date(
-                          property.host.createdAt || Date.now()
-                        ).getFullYear()}
-                      </span>
+                      <span>Host since {new Date(property.host.createdAt || Date.now()).getFullYear()}</span>
                     </div>
+                    {/* <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 text-sm">
+                      <Badge variant="outline" className="font-normal">
+                        <Key className="h-3 w-3 mr-1" /> Verified
+                      </Badge>
+                    </div> */}
                   </div>
                 </div>
 
@@ -1013,9 +830,7 @@ const PropertyDetails = () => {
                         <MapPin className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">
-                          Location
-                        </p>
+                        <p className="text-xs text-muted-foreground">Location</p>
                         <p>
                           {property.address.city}, {property.address.state}
                         </p>
@@ -1026,9 +841,7 @@ const PropertyDetails = () => {
                         <Calendar className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">
-                          Response Time
-                        </p>
+                        <p className="text-xs text-muted-foreground">Response Time</p>
                         <p>Usually within 24 hours</p>
                       </div>
                     </div>
@@ -1065,69 +878,54 @@ const PropertyDetails = () => {
       <ChatButton />
       <ChatWindow />
     </div>
-  );
-};
+  )
+}
 
 // Update the ShareOptions component to include more property details and improve social media sharing
+
 const ShareOptions = ({ property }) => {
   const propertyUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/${property._id}`
-      : `https://yourwebsite.com/${property._id}`;
+      : `https://yourwebsite.com/${property._id}`
 
   // Create a more detailed share text with property information
-  const shareText = `Check out this ${
-    property.bhkConfiguration.bedrooms
-  } BHK ${property.propertyType.toLowerCase()} in ${property.address.city}, ${
-    property.address.state
-  } for NPR ${property.pricePerMonth}/month`;
+  const shareText = `Check out this ${property.bhkConfiguration.bedrooms} BHK ${property.propertyType.toLowerCase()} in ${property.address.city}, ${property.address.state} for NPR ${property.pricePerMonth}/month`
 
   // Get the first property image URL for sharing (if available)
-  const imageUrl =
-    property.images && property.images.length > 0
-      ? property.images[0].url
-      : null;
+  const imageUrl = property.images && property.images.length > 0 ? property.images[0].url : null
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(propertyUrl).then(() => {
-      toast.success("Property link has been copied to clipboard");
-    });
-  };
+      toast.success("Property link has been copied to clipboard")
+    })
+  }
 
   const shareViaTwitter = () => {
     // Twitter/X sharing with more details
-    const twitterUrl = new URL("https://twitter.com/intent/tweet");
-    twitterUrl.searchParams.append("text", shareText);
-    twitterUrl.searchParams.append("url", propertyUrl);
-    twitterUrl.searchParams.append("hashtags", "RealEstate,Property");
+    const twitterUrl = new URL("https://twitter.com/intent/tweet")
+    twitterUrl.searchParams.append("text", shareText)
+    twitterUrl.searchParams.append("url", propertyUrl)
+    twitterUrl.searchParams.append("hashtags", "RealEstate,Property")
 
-    window.open(twitterUrl.toString(), "_blank", "width=600,height=400");
-  };
+    window.open(twitterUrl.toString(), "_blank", "width=600,height=400")
+  }
 
   const shareViaEmail = () => {
     // More detailed email sharing
-    const emailSubject = `Property Listing: ${property.title}`;
+    const emailSubject = `Property Listing: ${property.title}`
     const emailBody = `
 Check out this property I found:
 
 ${property.title}
-${
-  property.bhkConfiguration.bedrooms
-} BHK ${property.propertyType.toLowerCase()} in ${property.address.city}, ${
-      property.address.state
-    }
+${property.bhkConfiguration.bedrooms} BHK ${property.propertyType.toLowerCase()} in ${property.address.city}, ${property.address.state}
 Price: NPR ${property.pricePerMonth}/month
 Area: ${property.builtUpArea} sq.ft
 
 ${propertyUrl}
-`;
-    window.open(
-      `mailto:?subject=${encodeURIComponent(
-        emailSubject
-      )}&body=${encodeURIComponent(emailBody)}`,
-      "_blank"
-    );
-  };
+`
+    window.open(`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`, "_blank")
+  }
 
   // Try to use the Web Share API if available (for mobile devices)
   const handleNativeShare = async () => {
@@ -1137,16 +935,16 @@ ${propertyUrl}
           title: property.title,
           text: shareText,
           url: propertyUrl,
-        });
-        toast.success("Thanks for sharing!");
+        })
+        toast.success("Thanks for sharing!")
       } catch (err) {
-        console.error("Error sharing:", err);
+        console.error("Error sharing:", err)
       }
     } else {
       // Fallback to copy link if Web Share API is not available
-      handleCopyLink();
+      handleCopyLink()
     }
-  };
+  }
 
   return (
     <>
@@ -1163,16 +961,13 @@ ${propertyUrl}
         Email
       </DropdownMenuItem>
       {navigator.share && (
-        <DropdownMenuItem
-          onClick={handleNativeShare}
-          className="cursor-pointer"
-        >
+        <DropdownMenuItem onClick={handleNativeShare} className="cursor-pointer">
           <Share2 className="h-4 w-4 mr-2" />
           Share...
         </DropdownMenuItem>
       )}
     </>
-  );
-};
+  )
+}
 
-export default PropertyDetails;
+export default PropertyDetails
