@@ -344,7 +344,7 @@ export const UserProfile = () => {
               <div className="flex flex-col md:flex-row gap-8 mb-8 bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative group">
-                    <Avatar className="h-24 w-24 border-radius-50% border-2 border-white shadow-md">
+                    <Avatar className="h-26 w-26 border-radius-50% border-2 border-white shadow-md">
                       <AvatarImage
                         src={
                           profilePicturePreview ||
