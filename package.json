@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@radix-ui/react-tooltip": "^1.2.0"
+    "@radix-ui/react-tooltip": "^1.2.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "vite": "^6.3.1"
